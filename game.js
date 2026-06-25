@@ -18,9 +18,11 @@ const playerNameValue = document.getElementById("playerNameValue");
 
 const BEST_SCORE_KEY = "glow-breaker-best";
 const HOME_SCREEN_PROMPT_KEY = "glow-breaker-home-screen-prompted";
-const DEFAULT_PLAYER_NAME = "Guest Player";
+const DEFAULT_PLAYER_NAME = "LINE User";
+const LIFF_SETUP_NAME = "Set LIFF ID";
 const LINE_FALLBACK_NAME = "LINE Player";
 const LIFF_ID = document.body.dataset.liffId || window.__LIFF_ID__ || "";
+const HAS_VALID_LIFF_ID = Boolean(LIFF_ID && LIFF_ID !== "YOUR_LIFF_ID");
 const IS_VERIFIED_MINI_APP = document.body.dataset.verifiedMiniApp === "true";
 const pointer = { active: false, x: 0 };
 let primaryOverlayAction = null;
@@ -76,7 +78,12 @@ function setPlayerName(name) {
 async function initLineProfile() {
   setPlayerName(DEFAULT_PLAYER_NAME);
 
-  if (!window.liff || !LIFF_ID) {
+  if (!window.liff) {
+    return;
+  }
+
+  if (!HAS_VALID_LIFF_ID) {
+    setPlayerName(LIFF_SETUP_NAME);
     return;
   }
 
@@ -89,11 +96,25 @@ async function initLineProfile() {
     }
 
     homeScreenShortcutAvailable = Boolean(window.liff.isApiAvailable && window.liff.isApiAvailable("createShortcutOnHomeScreen"));
-    const profile = await window.liff.getProfile();
-    setPlayerName(profile.displayName || LINE_FALLBACK_NAME);
+
+    let displayName = "";
+
+    try {
+      const profile = await window.liff.getProfile();
+      displayName = profile?.displayName || "";
+    } catch (profileError) {
+      console.warn("LIFF profile fetch failed", profileError);
+    }
+
+    if (!displayName && typeof window.liff.getDecodedIDToken === "function") {
+      const idToken = window.liff.getDecodedIDToken();
+      displayName = idToken?.name || "";
+    }
+
+    setPlayerName(displayName || LINE_FALLBACK_NAME);
   } catch (error) {
     console.warn("LIFF profile load failed", error);
-    setPlayerName(DEFAULT_PLAYER_NAME);
+    setPlayerName(LINE_FALLBACK_NAME);
   }
 }
 
