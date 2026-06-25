@@ -21,13 +21,10 @@ const debugInfoValue = document.getElementById("debugInfoValue");
 
 const BEST_SCORE_KEY = "glow-breaker-best";
 const HOME_SCREEN_PROMPT_KEY = "glow-breaker-home-screen-prompted";
-const DEFAULT_PLAYER_NAME = "LINE User";
-const LIFF_SETUP_NAME = "LIFF ID Needed";
-const LINE_FALLBACK_NAME = "LINE Player";
-const PROFILE_CONSENT_LABEL = "\u30d7\u30ed\u30d5\u30a3\u30fc\u30eb\u306e\u8a31\u53ef\u3092\u8a2d\u5b9a";
-const LIFF_INIT_TIMEOUT_MS = 4000;
-const LIFF_ID = document.body.dataset.liffId || window.__LIFF_ID__ || "";
-const HAS_VALID_LIFF_ID = Boolean(LIFF_ID && LIFF_ID !== "YOUR_LIFF_ID");
+const DEFAULT_PLAYER_NAME = "Guest Player";
+const LIFF_SETUP_NAME = "Guest Player";
+const LINE_FALLBACK_NAME = "Guest Player";
+const PROFILE_CONSENT_LABEL = "";
 const IS_VERIFIED_MINI_APP = document.body.dataset.verifiedMiniApp === "true";
 const pointer = { active: false, x: 0 };
 let primaryOverlayAction = null;
@@ -117,117 +114,14 @@ function withTimeout(promise, ms, code = "TIMEOUT") {
 }
 
 async function requestProfileConsent() {
-  if (!window.liff?.permission || typeof window.liff.permission.requestAll !== "function") {
-    return;
-  }
-
-  profileConsentButton.disabled = true;
-  profileConsentButton.textContent = "\u78ba\u8a8d\u4e2d...";
-
-  try {
-    await window.liff.permission.requestAll();
-    setProfileConsentVisible(false);
-    await initLineProfile();
-  } catch (error) {
-    console.warn("LIFF permission request failed", error);
-    profileConsentButton.disabled = false;
-    profileConsentButton.textContent = PROFILE_CONSENT_LABEL;
-    setPlayerStatus("\u30d7\u30ed\u30d5\u30a3\u30fc\u30eb\u8a31\u53ef\u3092\u5b8c\u4e86\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f", "error");
-  }
+  return;
 }
 
 async function initLineProfile() {
   setPlayerName(DEFAULT_PLAYER_NAME);
-  setPlayerStatus("\u30d7\u30ed\u30d5\u30a3\u30fc\u30eb\u3092\u78ba\u8a8d\u4e2d...");
+  setPlayerStatus("\u753b\u9762\u3092\u30bf\u30c3\u30d7\u3057\u3066\u3059\u3050\u958b\u59cb\u3067\u304d\u307e\u3059");
   setDebugInfo("");
   setProfileConsentVisible(false);
-
-  if (!window.liff) {
-    setPlayerStatus("LIFF SDK\u3092\u8aad\u307f\u8fbc\u3081\u307e\u305b\u3093", "error");
-    return;
-  }
-
-  if (!HAS_VALID_LIFF_ID) {
-    setPlayerName(LIFF_SETUP_NAME);
-    setPlayerStatus("LIFF ID\u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044", "error");
-    return;
-  }
-
-  try {
-    await withTimeout(window.liff.init({ liffId: LIFF_ID, withLoginOnExternalBrowser: true }), LIFF_INIT_TIMEOUT_MS, "INIT_TIMEOUT");
-
-    if (!window.liff.isLoggedIn()) {
-      setPlayerName(LINE_FALLBACK_NAME);
-      setPlayerStatus("LINE\u30a2\u30d7\u30ea\u5185\u3067\u958b\u304f\u304b\u3001LINE\u30ed\u30b0\u30a4\u30f3\u304c\u5fc5\u8981\u3067\u3059", "error");
-      return;
-    }
-
-    homeScreenShortcutAvailable = Boolean(window.liff.isApiAvailable && window.liff.isApiAvailable("createShortcutOnHomeScreen"));
-
-    let displayName = "";
-    let profilePermissionState = "";
-    let openIdPermissionState = "";
-    const permissionApi = window.liff.permission;
-
-    if (permissionApi && typeof permissionApi.query === "function") {
-      try {
-        const profilePermission = await permissionApi.query("profile");
-        profilePermissionState = profilePermission?.state || "";
-      } catch (error) {
-        console.warn("LIFF profile permission query failed", error);
-      }
-
-      try {
-        const openIdPermission = await permissionApi.query("openid");
-        openIdPermissionState = openIdPermission?.state || "";
-      } catch (error) {
-        console.warn("LIFF openid permission query failed", error);
-      }
-    }
-
-    try {
-      const profile = await window.liff.getProfile();
-      displayName = profile?.displayName || "";
-    } catch (profileError) {
-      console.warn("LIFF profile fetch failed", profileError);
-    }
-
-    if (!displayName && typeof window.liff.getDecodedIDToken === "function") {
-      const idToken = window.liff.getDecodedIDToken();
-      displayName = idToken?.name || "";
-    }
-
-    if (displayName) {
-      setPlayerName(displayName);
-      setPlayerStatus("LINE\u30d7\u30ed\u30d5\u30a3\u30fc\u30eb\u3092\u53d6\u5f97\u3067\u304d\u307e\u3057\u305f");
-      return;
-    }
-
-    setPlayerName(LINE_FALLBACK_NAME);
-
-    const missingScopes = profilePermissionState === "unavailable" || openIdPermissionState === "unavailable";
-    const needsConsent = profilePermissionState === "prompt" || openIdPermissionState === "prompt";
-
-    if (needsConsent && permissionApi && typeof permissionApi.requestAll === "function") {
-      setProfileConsentVisible(true);
-      setPlayerStatus("LINE\u30d7\u30ed\u30d5\u30a3\u30fc\u30eb\u306e\u8a31\u53ef\u304c\u5fc5\u8981\u3067\u3059", "error");
-      return;
-    }
-
-    if (missingScopes) {
-      setPlayerStatus("LINE Developers\u5074\u3067 profile / openid scope \u3092\u6709\u52b9\u5316\u3057\u3066\u304f\u3060\u3055\u3044", "error");
-      return;
-    }
-
-    setPlayerStatus("\u30d7\u30ed\u30d5\u30a3\u30fc\u30eb\u3092\u53d6\u5f97\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f", "error");
-  } catch (error) {
-    console.warn("LIFF profile load failed", error);
-    setPlayerName(LINE_FALLBACK_NAME);
-    const errorCode = error && typeof error === "object" && "code" in error ? String(error.code) : "UNKNOWN";
-    const currentUrl = window.location.href;
-    setPlayerStatus("LIFF\u521d\u671f\u5316\u306b\u5931\u6557\u3057\u307e\u3057\u305f (" + errorCode + ")", "error");
-    setDebugInfo("current URL:\n" + currentUrl + "\nLIFF ID:\n" + LIFF_ID);
-  }
 }
 
 function resizeCanvas() {
@@ -882,7 +776,19 @@ function frame(timestamp) {
 }
 
 pauseButton.addEventListener("click", togglePause);
-startButton.addEventListener("click", beginGame);
+const startGameFromOverlay = (event) => {
+  event?.preventDefault();
+  beginGame();
+};
+
+startButton.addEventListener("click", startGameFromOverlay);
+startButton.addEventListener("pointerup", startGameFromOverlay);
+startOverlay.addEventListener("pointerup", (event) => {
+  if (event.target && event.target.id === "profileConsentButton") {
+    return;
+  }
+  startGameFromOverlay(event);
+});
 resumeButton.addEventListener("click", () => {
   if (typeof primaryOverlayAction === "function") {
     primaryOverlayAction();
