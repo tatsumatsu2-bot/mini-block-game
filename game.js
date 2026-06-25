@@ -48,7 +48,7 @@ const state = {
     vx: 0,
     vy: 0,
     radius: 12,
-    speed: 560,
+    speed: 448,
     stuck: true,
   },
   bricks: [],
@@ -75,7 +75,7 @@ function resetPositions(resetBall = true) {
 
   if (resetBall) {
     state.ball.radius = Math.max(8, width * 0.016);
-    state.ball.speed = 500 + state.stage * 50;
+    state.ball.speed = 400 + state.stage * 40;
     state.ball.x = width / 2;
     state.ball.y = state.paddle.y - 28;
     state.ball.vx = state.ball.speed * 0.75;
