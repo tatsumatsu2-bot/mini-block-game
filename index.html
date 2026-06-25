@@ -37,37 +37,39 @@
       </div>
 
       <div class="playfield-frame">
-        <canvas id="gameCanvas" width="720" height="1080" aria-label="郢晄じﾎ溽ｹ昴・縺題泛・ｩ邵ｺ蜉ｱ縺皮ｹ晢ｽｼ郢晢｣ｰ"></canvas>
+        <canvas id="gameCanvas" width="720" height="1080" aria-label="&#12502;&#12525;&#12483;&#12463;&#23849;&#12375;&#12466;&#12540;&#12512;"></canvas>
 
         <div class="overlay" id="startOverlay">
           <div class="overlay-card">
-            <p class="eyebrow">Tap & Slide</p>
+            <p class="eyebrow">Tap &amp; Slide</p>
             <div class="player-chip" aria-live="polite">
               <span class="player-chip-label">LINE User</span>
-              <strong id="playerNameValue">髫ｱ・ｭ邵ｺ・ｿ髴趣ｽｼ邵ｺ・ｿ闕ｳ・ｭ...</strong>
+              <strong id="playerNameValue">LINE User</strong>
             </div>
-            <h2>隰悶・縲堤ｹ晁・繝ｻ郢ｧ雋櫁劒邵ｺ荵晢ｼ邵ｺ・ｦ<br>郢晄じﾎ溽ｹ昴・縺醍ｹｧ蜑・ｽｸﾂ雎悟干竊楢泛・ｩ邵ｺ譏ｴ竕ｧ</h2>
-            <p class="overlay-copy">鬨ｾ・｣驍ｯ螢ｹ繝ｲ郢昴・繝ｨ邵ｺ・ｧ郢ｧ・ｳ郢晢ｽｳ郢晄・ﾂ蜥ｲ邏ｫ郢ｧ・｢郢昴・繝ｻ邵ｲ繧・○郢昴・繝ｻ郢ｧ・ｸ邵ｺ遒・・ｲ郢ｧﾂ邵ｺ・ｻ邵ｺ・ｩ郢晄㈱繝ｻ郢晢ｽｫ郢ｧ繧仰貅假ｿ･邵ｺ・ｪ郢ｧ鄙ｫ竏ｪ邵ｺ蜷ｶﾂ繝ｻ/p>
-            <button id="startButton" class="primary-button" type="button">郢ｧ・ｲ郢晢ｽｼ郢晢｣ｰ郢ｧ・ｹ郢ｧ・ｿ郢晢ｽｼ郢昴・/button>
+            <p id="playerStatusValue" style="margin:0 0 14px;color:#5f6b7b;font-size:0.82rem;line-height:1.5;">&#12503;&#12525;&#12501;&#12451;&#12540;&#12523;&#12434;&#30906;&#35469;&#20013;...</p>
+            <button id="profileConsentButton" class="secondary-button hidden" type="button">&#12503;&#12525;&#12501;&#12451;&#12540;&#12523;&#12398;&#35377;&#21487;&#12434;&#35373;&#23450;</button>
+            <h2>&#25351;&#12391;&#12496;&#12540;&#12434;&#21205;&#12363;&#12375;&#12390;<br>&#12502;&#12525;&#12483;&#12463;&#12434;&#19968;&#27671;&#12395;&#23849;&#12381;&#12358;</h2>
+            <p class="overlay-copy">&#36899;&#32154;&#12498;&#12483;&#12488;&#12391;&#12467;&#12531;&#12508;&#20513;&#29575;&#12450;&#12483;&#12503;&#12290;&#12473;&#12486;&#12540;&#12472;&#12364;&#36914;&#12416;&#12411;&#12393;&#12508;&#12540;&#12523;&#12364;&#36895;&#12367;&#12394;&#12426;&#12414;&#12377;&#12290;</p>
+            <button id="startButton" class="primary-button" type="button">&#12466;&#12540;&#12512;&#12473;&#12479;&#12540;&#12488;</button>
           </div>
         </div>
 
         <div class="overlay hidden" id="messageOverlay">
           <div class="overlay-card compact">
             <p class="eyebrow" id="messageEyebrow">Paused</p>
-            <h2 id="messageTitle">闕ｳﾂ隴弱ｇ笳剰ｱ・ｽ｢闕ｳ・ｭ</h2>
-            <p class="overlay-copy" id="messageCopy">陷蝓ｼ蟷慕ｸｺ蜉ｱ窶ｻ驍ｯ螢ｹ窶ｳ郢ｧ蟶昶凰邵ｺ・ｹ邵ｺ・ｾ邵ｺ蜷ｶﾂ繝ｻ/p>
+            <h2 id="messageTitle">&#19968;&#26178;&#20572;&#27490;&#20013;</h2>
+            <p class="overlay-copy" id="messageCopy">&#20877;&#38283;&#12375;&#12390;&#32154;&#12365;&#12434;&#36938;&#12409;&#12414;&#12377;&#12290;</p>
             <div class="overlay-actions">
-              <button id="resumeButton" class="primary-button" type="button">陷蝓ｼ蟷慕ｸｺ蜷ｶ・・/button>
-              <button id="secondaryActionButton" class="secondary-button hidden" type="button">邵ｺ繧・・邵ｺ・ｧ</button>
+              <button id="resumeButton" class="primary-button" type="button">&#20877;&#38283;&#12377;&#12427;</button>
+              <button id="secondaryActionButton" class="secondary-button hidden" type="button">&#12354;&#12392;&#12391;</button>
             </div>
           </div>
         </div>
       </div>
 
       <div class="controls-hint">
-        <span>陝ｾ・ｦ陷ｿ・ｳ邵ｺ・ｫ郢ｧ・ｹ郢晢ｽｩ郢ｧ・､郢晏ｳｨ・邵ｺ・ｦ隰ｫ蝣ｺ・ｽ繝ｻ/span>
-        <span>郢ｧ・ｿ郢昴・繝ｻ邵ｺ・ｧ陷蝓ｼ蟷・/ 郢晢ｽｪ郢晏現ﾎ帷ｹｧ・､</span>
+        <span>&#24038;&#21491;&#12395;&#12473;&#12521;&#12452;&#12489;&#12375;&#12390;&#25805;&#20316;</span>
+        <span>&#12479;&#12483;&#12503;&#12391;&#20877;&#38283; / &#12522;&#12488;&#12521;&#12452;</span>
       </div>
     </section>
   </div>
